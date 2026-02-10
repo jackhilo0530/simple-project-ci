@@ -22,11 +22,11 @@ class Migration_Create_user extends CI_Migration
 				'constraint' => '100',
 				'unique' => TRUE
 			),
-			'password' => array(
+			'password_hash' => array(
 				'type' => 'VARCHAR',
 				'constraint' => '255'
 			),
-			'image' => array(
+			'img_path' => array(
 				'type' => 'VARCHAR',
 				'constraint' => '255',
 				'null' => TRUE
