@@ -67,10 +67,8 @@
                     $_SESSION['user_id'] = (int)$user->id;
                     $_SESSION['username'] = (string)$user->username;
                     $_SESSION['logged_in'] = (bool)true;
-
-                    $this->load->view('header');
-                    $this->load->view('user/signin_success');
-                    $this->load->view('footer');
+    
+                    redirect('/');
                 } else {
                     $data->error = 'Wrong username or password.';
                     $this->load->view('header');
