@@ -68,7 +68,7 @@
                     $_SESSION['username'] = (string)$user->username;
                     $_SESSION['logged_in'] = (bool)true;
     
-                    redirect('/');
+                    redirect('/dashboard');
                 } else {
                     $data->error = 'Wrong username or password.';
                     $this->load->view('header');

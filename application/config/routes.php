@@ -53,5 +53,6 @@ $route['default_controller'] = 'pages/view';
 $route['signup'] = 'auth/signup';
 $route['signin'] = 'auth/signin';
 $route['logout'] = 'auth/logout';
+$route['dashboard'] = 'dashboard';
 $route['translate_uri_dashes'] = FALSE;
 
