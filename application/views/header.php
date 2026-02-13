@@ -1,7 +1,7 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
 <!Doctype html>
 
-<html lang="en">
+<html lang="en" data-bs-theme="light">
 
 <head>
     <meta charset="utf-8">
@@ -14,35 +14,31 @@
 
     <link href="<?php echo base_url('assets/css/bootstrap.min.css'); ?>" rel="stylesheet">
     <link href="<?php echo base_url('assets/css/style.css'); ?>" rel="stylesheet">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
 
 </head>
 
 <body>
-    <header id="site-header">
-        <nav class="navbar navbar-default" role="navigation">
-            <div class="container-fluid">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
-                        data-target="#bs-example-navbar-collapse-1">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a class="navbar-brand" href="<?= base_url() ?>">Site title</a>
-                </div>
-                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                    <ul class="nav navbar-nav navbar-right">
-                        <?php if (isset($_SESSION['username']) && $_SESSION['logged_in'] === true): ?>
-                            <li><a href="<?php echo base_url('logout'); ?>">Logout</a></li>
-                        <?php else: ?>
-                            <li><a href="<?php echo base_url('signup'); ?>">Signup</a></li>
-                            <li><a href="<?php echo base_url('signin'); ?>">Signin</a></li>
-                        <?php endif; ?>
-                    </ul>
-                </div><!-- .navbar-collapse -->
-            </div><!-- .container-fluid -->
-        </nav>
-    </header>
+    <div class="container">
+        <header
+            class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-end py-3 mb-4 border-bottom">
 
-    <main id="site-content" role="main">
+            <div class="col-md-3 text-end">
+                <?php if (isset($_SESSION['username']) && $_SESSION['logged_in'] === true): ?>
+                    <a href="<?php echo base_url('logout'); ?>"><button type="button" class="btn btn-outline-primary me-2">
+                            Logout
+                        </button></a>
+                <?php else: ?>
+                    <a href="<?php echo base_url('signup'); ?>"><button type="button" class="btn btn-outline-primary me-2">
+                            Signup
+                        </button></a>
+                    <a href="<?php echo base_url('signin'); ?>"><button type="button" class="btn btn-outline-primary me-2">
+                            Signin
+                        </button></a>
+                <?php endif; ?>
+            </div>
+        </header>
+    </div>
+
+    <main class="row" id="site-content" role="main">
