@@ -54,5 +54,6 @@ $route['signup'] = 'auth/signup';
 $route['signin'] = 'auth/signin';
 $route['logout'] = 'auth/logout';
 $route['dashboard'] = 'dashboard';
+$route['products'] = 'dashboard/products';
 $route['translate_uri_dashes'] = FALSE;
 
