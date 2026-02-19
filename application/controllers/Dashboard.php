@@ -16,12 +16,5 @@ class Dashboard extends CI_Controller
         $this->load->view("dashboard");
         $this->load->view("footer");
     }
-    public function products()
-    {
-        $this->load->view("header");
-        $this->load->view("sidebar");
-        $this->load->view("pages/products");
-        $this->load->view("footer");
-    }
 }
 ?>
