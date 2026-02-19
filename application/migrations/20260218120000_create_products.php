@@ -35,11 +35,9 @@ class Migration_Create_products extends CI_Migration
                 'constraint' => '255',
                 'null' => TRUE
             ),
-            'category_id' => array(
-                'type' => 'INT',
-                'constraint' => 5,
-                'unsigned' => TRUE,
-                'null' => TRUE
+            'category' => array(
+                'type'=> 'VARCHAR',
+                'constraint' => '50',
             ),
             'created_at' => array(
                 'type' => 'DATETIME',

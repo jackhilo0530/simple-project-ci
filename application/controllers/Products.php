@@ -41,7 +41,7 @@ class Products extends CI_Controller
                 'sku' => $this->input->post('sku'),
                 'price' => $this->input->post('price'),
                 'image_path' => $this->input->post('image_path'),
-                'category_id' => $this->input->post('category_id'),
+                'category' => $this->input->post('category'),
                 'created_at' => date('Y-m-d H:i:s'),
             );
 
@@ -75,7 +75,7 @@ class Products extends CI_Controller
                 'sku' => $this->input->post('sku'),
                 'price' => $this->input->post('price'),
                 'image_path' => $this->input->post('image_path'),
-                'category_id' => $this->input->post('category_id'),
+                'category' => $this->input->post('category'),
                 'updated_at' => date('Y-m-d H:i:s')
             );
 
