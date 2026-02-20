@@ -2,79 +2,98 @@
 defined("BASEPATH") or exit("No direct script access allowed");
 ?>
 
-<div class="container mt-5 mx-2">
-    <h1 class="mb-4 offset-1">Edit Product</h1>
-    <?php echo form_open_multipart('products/edit_product/' . $product['id']); ?>
-    <div class="row mx-3 justify-content-center">
-        <!-- Left Column for Product Details -->
-        <div class="col-6">
-            <div class="card mb-4">
-                <div class="card-header">Product Details</div>
+<div class="flex-1 p-6 lg:p-10">
+    <div class="max-w-6xl mx-auto">
+        <h1 class="text-3xl font-bold tracking-tight text-gray-900 mb-8">Edit Product</h1>
 
-                <div class="card-body">
-                    <div class="mb-3">
-                        <label for="productName" class="form-label">Product Name</label>
-                        <input type="text" class="form-control" id="productName" name="name"
-                            placeholder="Enter product name" value="<?php echo set_value('name', $product['name']); ?>"
-                            required>
+        <?php echo form_open_multipart('products/edit_product/' . $product['id'], array('class' => 'space-y-8')); ?>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <!-- Left Column: Product Details -->
+            <div class="lg:col-span-2 space-y-6">
+                <div class="bg-white rounded-xl border border-gray-200 shadow-xs overflow-hidden">
+                    <div class="bg-gray-50 border-b border-gray-200 px-6 py-4">
+                        <h2 class="text-sm font-semibold text-gray-900 uppercase tracking-wider">Product Details</h2>
                     </div>
-                    <div class="mb-3">
-                        <label for="productDescription" class="form-label">Description</label>
-                        <textarea class="form-control" id="productDescription" name="description" rows="3"
-                            placeholder="Enter product description"><?php echo set_value('description', $product['description']); ?></textarea>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-4">
-                            <label for="productPrice" class="form-label">Price ($)</label>
-                            <input type="number" class="form-control" id="productPrice" name="price" placeholder="0.00"
-                                value="<?php echo set_value('price', $product['price']); ?>" required>
+                    <div class="p-6 space-y-5">
+                        <!-- Name -->
+                        <div>
+                            <label for="productName" class="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
+                            <input type="text" id="productName" name="name"
+                                value="<?php echo set_value('name', $product['name']); ?>" required
+                                class="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-hidden transition-all">
                         </div>
-                        <div class="col-4">
-                            <label for="productSKU" class="form-label">SKU</label>
-                            <input type="text" class="form-control" id="productSKU" name="sku" placeholder="Enter SKU"
-                                value="<?php echo set_value('sku', $product['sku']); ?>" required>
+
+                        <!-- Description -->
+                        <div>
+                            <label for="productDescription" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                            <textarea id="productDescription" name="description" rows="4"
+                                class="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-hidden transition-all"><?php echo set_value('description', $product['description']); ?></textarea>
                         </div>
-                        <div class="col-4">
-                            <label for="productCategory" class="form-label">Category</label>
-                            <select class="form-select" id="productCategory" name="category" required>
-                                <option value="">Choose...</option>
-                                <option value="laptop" <?php echo set_select('category', 'laptop', $product['category'] == 'laptop'); ?>>Electronics</option>
-                                <option value="clothing" <?php echo set_select('category', 'clothing', $product['category'] == 'clothing'); ?>>Clothing</option>
-                                <option value="home_goods" <?php echo set_select('category', 'home_goods', $product['category'] == 'home_goods'); ?>>Home Goods</option>
-                            </select>
+
+                        <!-- Price, SKU, Category Grid -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label for="productPrice" class="block text-sm font-medium text-gray-700 mb-1">Price ($)</label>
+                                <input type="number" id="productPrice" name="price" step="0.01"
+                                    value="<?php echo set_value('price', $product['price']); ?>" required
+                                    class="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-hidden">
+                            </div>
+                            <div>
+                                <label for="productSKU" class="block text-sm font-medium text-gray-700 mb-1">SKU</label>
+                                <input type="text" id="productSKU" name="sku"
+                                    value="<?php echo set_value('sku', $product['sku']); ?>" required
+                                    class="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-hidden">
+                            </div>
+                            <div>
+                                <label for="productCategory" class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                                <select id="productCategory" name="category" required
+                                    class="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-hidden">
+                                    <option value="laptop" <?php echo set_select('category', 'laptop', $product['category'] == 'laptop'); ?>>Electronics</option>
+                                    <option value="clothing" <?php echo set_select('category', 'clothing', $product['category'] == 'clothing'); ?>>Clothing</option>
+                                    <option value="home_goods" <?php echo set_select('category', 'home_goods', $product['category'] == 'home_goods'); ?>>Home Goods</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Right Column for Image Upload/Status -->
-        
-        <div class="col-4">
-            <div class="card mb-4">
-                <div class="card-header">Product Images</div>
-                <div class="card-body text-center">
-                    <!-- 1. Display the CURRENT image from the database -->
-                    <div class="mb-3">
-                        <label class="form-label d-block">Current Image</label>
+            <!-- Right Column: Image Management -->
+            <div class="space-y-6">
+                <div class="bg-white rounded-xl border border-gray-200 shadow-xs overflow-hidden">
+                    <div class="bg-gray-50 border-b border-gray-200 px-6 py-4">
+                        <h2 class="text-sm font-semibold text-gray-900 uppercase tracking-wider">Product Image</h2>
+                    </div>
+                    <div class="p-6 flex flex-col items-center">
+                        <span class="block text-xs font-semibold text-gray-400 uppercase mb-3 self-start">Current Image</span>
                         <img src="<?php echo base_url('uploads/' . ($product['image_path'] ?: 'default.jpg')); ?>"
-                            class="img-thumbnail" style="height: 150px; object-fit: cover;">
-                    </div>
+                            class="h-48 w-48 rounded-lg border border-gray-200 object-cover shadow-xs mb-6">
 
-                    <!-- 2. The input for a NEW image (Keep value attribute OUT) -->
-                    <div class="text-start">
-                        <label for="formFile" class="form-label">Change Image (Optional)</label>
-                        <input class="form-control" type="file" id="formFile" name="image_path">
-                        <small class="text-muted">Leave empty to keep the current image.</small>
+                        <div class="w-full">
+                            <label for="formFile" class="block text-sm font-medium text-gray-700 mb-2">Change Image</label>
+                            <input type="file" id="formFile" name="image_path"
+                                class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition-all cursor-pointer">
+                            <p class="mt-2 text-xs text-gray-400 italic">Leave empty to keep current image.</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="offset-2">
-        <button type="submit" class="btn btn-primary">Update Product</button>
-        <a href="<?php echo site_url('products'); ?>" class="btn btn-secondary">Cancel</a>
+        <!-- Form Actions -->
+        <div class="flex items-center gap-4 pt-4 border-t border-gray-100">
+            <button type="submit"
+                class="rounded-md bg-blue-600 px-8 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-blue-600 transition-all cursor-pointer">
+                Update Product
+            </button>
+            <a href="<?php echo site_url('products'); ?>"
+                class="no-underline rounded-md bg-white px-8 py-2.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 transition-all">
+                Cancel
+            </a>
+        </div>
+
+        <?php echo form_close(); ?>
     </div>
-    <?php echo form_close(); ?>
 </div>
