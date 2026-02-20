@@ -20,7 +20,12 @@ class Products extends CI_Controller
 
     public function index()
     {
-        $data['products'] = $this->products_model->get_all_products();
+        $keyword = $this->input->post('search');
+        if(empty($keyword)) {
+            $data['products'] = $this->products_model->get_all_products();
+        } else {
+            $data['products'] = $this->products_model->search_products($keyword);
+        }
 
         $this->load->view('header');
         $this->load->view('sidebar');
@@ -34,7 +39,7 @@ class Products extends CI_Controller
 
         $this->form_validation->set_rules('name', 'Name', 'trim|required');
         $this->form_validation->set_rules('price', 'Price', 'trim|required|numeric');
-        $this->form_validation->set_rules('sku', 'SKU', 'trim|required|unique[products.sku]');
+        $this->form_validation->set_rules('sku', 'SKU', 'trim|required|is_unique[products.sku]');
 
         if ($this->form_validation->run() == FALSE) {
             $this->load->view('header');
@@ -50,7 +55,7 @@ class Products extends CI_Controller
                 'description' => $this->input->post('description'),
                 'sku' => $this->input->post('sku'),
                 'price' => $this->input->post('price'),
-                'category' => $this->input->post('category'),
+                'category_id' => $this->input->post('category_id'),
                 'created_at' => date('Y-m-d H:i:s'),
             );
 
@@ -88,7 +93,7 @@ class Products extends CI_Controller
                 'description' => $this->input->post('description'),
                 'sku' => $this->input->post('sku'),
                 'price' => $this->input->post('price'),
-                'category' => $this->input->post('category'),
+                'category_id' => $this->input->post('category_id'),
                 'updated_at' => date('Y-m-d H:i:s')
             );
 

@@ -9,14 +9,15 @@ defined("BASEPATH") or exit("No direct script access allowed");
 
         <div class="flex flex-wrap items-center gap-3">
             <!-- Search Form -->
-            <form role="search" class="flex items-center gap-2">
-                <input type="search" id="search" placeholder="Search" aria-label="Search"
-                    class="block w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm shadow-xs focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-hidden">
-                <button type="submit"
-                    class="rounded-md border border-green-600 px-3 py-1.5 text-sm font-medium text-green-600 hover:bg-green-50 transition-colors cursor-pointer">
-                    Search
-                </button>
-            </form>
+            <?php echo form_open('products', array('class' => 'flex items-center gap-2')); ?>
+            <input type="search" id="search" placeholder="Search" aria-label="Search" name="search"
+                value="<?php echo html_escape($this->input->post('search')); ?>"
+                class="block w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm shadow-xs focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-hidden">
+            <button type="submit"
+                class="rounded-md border border-green-600 px-3 py-1.5 text-sm font-medium text-green-600 hover:bg-green-50 transition-colors cursor-pointer">
+                Search
+            </button>
+            <?php echo form_close(); ?>
 
             <!-- Category Filter -->
             <select id="category" aria-label="Category Filter"
@@ -43,8 +44,14 @@ defined("BASEPATH") or exit("No direct script access allowed");
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-100">
-                <?php foreach ($products as $product): ?>
-                    <tr class="hover:bg-gray-50 transition-colors">
+                <?php if (empty($products)) : ?>
+                    <tr>
+                        <td colspan="7" class="px-6 py-4 text-center text-sm text-gray-500">No products found.</td>
+                    </tr>
+                <?php else : ?>
+                    <?php foreach ($products as $product) : ?>
+                        <!-- Render product row -->
+                        <tr class="hover:bg-gray-50 transition-colors">
                         <!-- Product & Image -->
                         <td class="px-6 py-4">
                             <div class="flex items-center gap-4">
@@ -61,8 +68,8 @@ defined("BASEPATH") or exit("No direct script access allowed");
                         </td>
 
                         <!-- SKU -->
-                        <td class="px-6 py-4">
-                            <code class="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-semibold text-gray-700">
+                        <td class="px-2 py-4">
+                            <code class="rounded bg-gray-100 px-0 py-0.5 text-xs font-semibold text-gray-700">
                                 <?php echo $product['sku']; ?>
                             </code>
                         </td>
@@ -75,7 +82,7 @@ defined("BASEPATH") or exit("No direct script access allowed");
                         <!-- Category Badge -->
                         <td class="px-6 py-4">
                             <span class="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">
-                                <?php echo ucfirst($product['category']); ?>
+                                <?php echo ucfirst($product['category_name']); ?>
                             </span>
                         </td>
 
@@ -94,7 +101,9 @@ defined("BASEPATH") or exit("No direct script access allowed");
                             </div>
                         </td>
                     </tr>
-                <?php endforeach; ?>
+                        
+                    <?php endforeach; ?>
+                <?php endif; ?>
             </tbody>
         </table>
     </div>

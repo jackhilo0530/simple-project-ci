@@ -60,3 +60,4 @@ class Migration_Create_user extends CI_Migration
         }
     }
 }
+?>
