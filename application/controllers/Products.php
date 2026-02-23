@@ -51,10 +51,10 @@ class Products extends CI_Controller
         $this->pagination->initialize($config);
         $data['pagination_links'] = $this->pagination->create_links();
 
-        $this->load->view('header');
-        $this->load->view('sidebar');
-        $this->load->view('pages/products', $data);
-        $this->load->view('footer');
+        $this->load->view('layout/header');
+        $this->load->view('layout/sidebar');
+        $this->load->view('pages/products/products', $data);
+        $this->load->view('layout/footer');
     }
 
     public function add_product()
@@ -67,9 +67,9 @@ class Products extends CI_Controller
         $this->form_validation->set_rules('category_id', 'Category', 'trim|required');
 
         if ($this->form_validation->run() == FALSE) {
-            $this->load->view('header');
-            $this->load->view('pages/add_product');
-            $this->load->view('footer');
+            $this->load->view('layout/header');
+            $this->load->view('pages/products/add_product');
+            $this->load->view('layout/footer');
         } else {
 
             $upload_result = $this->do_upload('image_path');
@@ -108,9 +108,9 @@ class Products extends CI_Controller
         if ($this->form_validation->run() == FALSE) {
             $data['product'] = $this->products_model->get_by_id($id);
 
-            $this->load->view('header');
-            $this->load->view('pages/edit_product', $data);
-            $this->load->view('footer');
+            $this->load->view('layout/header');
+            $this->load->view('pages/products/edit_product', $data);
+            $this->load->view('layout/footer');
             return;
         } else {
 
