@@ -35,9 +35,10 @@ class Migration_Create_products extends CI_Migration
                 'constraint' => '255',
                 'null' => TRUE
             ),
-            'category' => array(
-                'type'=> 'VARCHAR',
-                'constraint' => '50',
+            'category_id' => array(
+                'type'=> 'INT',
+                'constraint' => '5',
+                'unsigned' => TRUE
             ),
             'created_at' => array(
                 'type' => 'DATETIME',
@@ -51,6 +52,11 @@ class Migration_Create_products extends CI_Migration
 
         $this->dbforge->add_field($fields);
         $this->dbforge->add_key('id', TRUE);
+
+        $this->dbforge->add_field('CONSTRAINT FOREIGN KEY (category_id) REFERENCES category(id) ON DELETE CASCADE');
+
+        $this->dbforge->add_key('name');
+        $this->dbforge->add_key('category_id');
 
         if ($this->dbforge->create_table('products', true)) {
             echo 'Table "products" created successfully!';
@@ -68,3 +74,4 @@ class Migration_Create_products extends CI_Migration
         }
     }
 }
+?>

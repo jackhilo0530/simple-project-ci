@@ -20,12 +20,41 @@ class Products extends CI_Controller
 
     public function index()
     {
-        $data['products'] = $this->products_model->get_all_products();
+        // FIX: Change 'post' to 'get' so values stay in the URL
+        $keyword = $this->input->get('search');
+        $category_id = $this->input->get('category_id');
+        $page = $this->input->get('page') ?: 1;
 
-        $this->load->view('header');
-        $this->load->view('sidebar');
-        $this->load->view('pages/products', $data);
-        $this->load->view('footer');
+        // Fetch data from Model
+        if (!$keyword && !$category_id) {
+            $result = $this->products_model->get_all_products($page);
+        } else {
+            $result = $this->products_model->search_products($keyword, $category_id, $page);
+        }
+
+        $data['products'] = $result['products'];
+        $data['total_products'] = $result['total'];
+        $data['current_page'] = $page;
+
+        // --- PAGINATION SETTINGS ---
+        $this->load->library('pagination');
+        $config['base_url'] = site_url('products');
+        $config['total_rows'] = $result['total'];
+        $config['per_page'] = 4;
+        $config['page_query_string'] = TRUE;
+        $config['query_string_segment'] = 'page';
+        $config['use_page_numbers'] = TRUE;
+
+        // CRITICAL: This automatically appends ?search=...&category_id=... to your pagination links
+        $config['reuse_query_string'] = TRUE;
+
+        $this->pagination->initialize($config);
+        $data['pagination_links'] = $this->pagination->create_links();
+
+        $this->load->view('layout/header');
+        $this->load->view('layout/sidebar');
+        $this->load->view('pages/products/products', $data);
+        $this->load->view('layout/footer');
     }
 
     public function add_product()
@@ -34,12 +63,13 @@ class Products extends CI_Controller
 
         $this->form_validation->set_rules('name', 'Name', 'trim|required');
         $this->form_validation->set_rules('price', 'Price', 'trim|required|numeric');
-        $this->form_validation->set_rules('sku', 'SKU', 'trim|required|unique[products.sku]');
+        $this->form_validation->set_rules('sku', 'SKU', 'trim|required|is_unique[products.sku]');
+        $this->form_validation->set_rules('category_id', 'Category', 'trim|required');
 
         if ($this->form_validation->run() == FALSE) {
-            $this->load->view('header');
-            $this->load->view('pages/add_product');
-            $this->load->view('footer');
+            $this->load->view('layout/header');
+            $this->load->view('pages/products/add_product');
+            $this->load->view('layout/footer');
         } else {
 
             $upload_result = $this->do_upload('image_path');
@@ -50,7 +80,7 @@ class Products extends CI_Controller
                 'description' => $this->input->post('description'),
                 'sku' => $this->input->post('sku'),
                 'price' => $this->input->post('price'),
-                'category' => $this->input->post('category'),
+                'category_id' => $this->input->post('category_id'),
                 'created_at' => date('Y-m-d H:i:s'),
             );
 
@@ -73,13 +103,14 @@ class Products extends CI_Controller
         $this->form_validation->set_rules('name', 'Name', 'trim|required');
         $this->form_validation->set_rules('price', 'Price', 'trim|required|numeric');
         $this->form_validation->set_rules('sku', 'SKU', 'trim|required');
+        $this->form_validation->set_rules('category_id', 'Category', 'trim|required');
 
         if ($this->form_validation->run() == FALSE) {
             $data['product'] = $this->products_model->get_by_id($id);
 
-            $this->load->view('header');
-            $this->load->view('pages/edit_product', $data);
-            $this->load->view('footer');
+            $this->load->view('layout/header');
+            $this->load->view('pages/products/edit_product', $data);
+            $this->load->view('layout/footer');
             return;
         } else {
 
@@ -88,7 +119,7 @@ class Products extends CI_Controller
                 'description' => $this->input->post('description'),
                 'sku' => $this->input->post('sku'),
                 'price' => $this->input->post('price'),
-                'category' => $this->input->post('category'),
+                'category_id' => $this->input->post('category_id'),
                 'updated_at' => date('Y-m-d H:i:s')
             );
 

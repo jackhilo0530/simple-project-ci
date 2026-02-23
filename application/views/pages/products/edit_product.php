@@ -48,11 +48,11 @@ defined("BASEPATH") or exit("No direct script access allowed");
                             </div>
                             <div>
                                 <label for="productCategory" class="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                                <select id="productCategory" name="category" required
+                                <select id="productCategory" name="category_id" required
                                     class="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-xs focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-hidden">
-                                    <option value="laptop" <?php echo set_select('category', 'laptop', $product['category'] == 'laptop'); ?>>Electronics</option>
-                                    <option value="clothing" <?php echo set_select('category', 'clothing', $product['category'] == 'clothing'); ?>>Clothing</option>
-                                    <option value="home_goods" <?php echo set_select('category', 'home_goods', $product['category'] == 'home_goods'); ?>>Home Goods</option>
+                                    <option value="1" <?php echo set_select('category_id', '1', $product['category_id'] == '1'); ?>>Electronics</option>
+                                    <option value="2" <?php echo set_select('category_id', '2', $product['category_id'] == '2'); ?>>Clothing</option>
+                                    <option value="3" <?php echo set_select('category_id', '3', $product['category_id'] == '3'); ?>>Home Goods</option>
                                 </select>
                             </div>
                         </div>

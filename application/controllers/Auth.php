@@ -20,9 +20,9 @@
             $this->form_validation->set_rules('password_confirm', 'Confirm password', 'trim|required|min_length[6]|matches[password]');
 
             if($this->form_validation->run() == FALSE){
-                $this->load->view('header');
-                $this->load->view('user/signup');
-                $this->load->view('footer');
+                $this->load->view('layout/header');
+                $this->load->view('pages/user/signup');
+                $this->load->view('layout/footer');
             } else {
                 $username = $this->input->post('username');
                 $email = $this->input->post('email');
@@ -30,13 +30,13 @@
 
                 if($this->auth_model->signup($username, $email, $password)) {
                     
-                    $this->load->view('header');
-                    $this->load->view('user/signin');
-                    $this->load->view('footer');
+                    $this->load->view('layout/header');
+                    $this->load->view('pages/user/signin');
+                    $this->load->view('layout/footer');
                 } else {
-                    $this->load->view('header');
-                    $this->load->view('user/signup');
-                    $this->load->view('footer');
+                    $this->load->view('layout/header');
+                    $this->load->view('pages/user/signup');
+                    $this->load->view('layout/footer');
                 }
 
             }
@@ -53,9 +53,9 @@
             $this->form_validation->set_rules('password', 'Password', 'trim|required');
 
             if($this->form_validation->run() == FALSE) {
-                $this->load->view('header');
-                $this->load->view('user/signin');
-                $this->load->view('footer');
+                $this->load->view('layout/header');
+                $this->load->view('pages/user/signin');
+                $this->load->view('layout/footer');
             } else {
                 $username = $this->input->post('username');
                 $password = $this->input->post('password');
@@ -71,9 +71,9 @@
                     redirect('/dashboard');
                 } else {
                     $data->error = 'Wrong username or password.';
-                    $this->load->view('header');
-                    $this->load->view('user/signin', $data);
-                    $this->load->view('footer');
+                    $this->load->view('layout/header');
+                    $this->load->view('pages/user/signin', $data);
+                    $this->load->view('layout/footer');
                 }
                 
             }
