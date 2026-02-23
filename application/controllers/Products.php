@@ -20,12 +20,36 @@ class Products extends CI_Controller
 
     public function index()
     {
-        $keyword = $this->input->post('search');
-        if(empty($keyword)) {
-            $data['products'] = $this->products_model->get_all_products();
+        // FIX: Change 'post' to 'get' so values stay in the URL
+        $keyword = $this->input->get('search');
+        $category_id = $this->input->get('category_id');
+        $page = $this->input->get('page') ?: 1;
+
+        // Fetch data from Model
+        if (!$keyword && !$category_id) {
+            $result = $this->products_model->get_all_products($page);
         } else {
-            $data['products'] = $this->products_model->search_products($keyword);
+            $result = $this->products_model->search_products($keyword, $category_id, $page);
         }
+
+        $data['products'] = $result['products'];
+        $data['total_products'] = $result['total'];
+        $data['current_page'] = $page;
+
+        // --- PAGINATION SETTINGS ---
+        $this->load->library('pagination');
+        $config['base_url'] = site_url('products');
+        $config['total_rows'] = $result['total'];
+        $config['per_page'] = 4;
+        $config['page_query_string'] = TRUE;
+        $config['query_string_segment'] = 'page';
+        $config['use_page_numbers'] = TRUE;
+
+        // CRITICAL: This automatically appends ?search=...&category_id=... to your pagination links
+        $config['reuse_query_string'] = TRUE;
+
+        $this->pagination->initialize($config);
+        $data['pagination_links'] = $this->pagination->create_links();
 
         $this->load->view('header');
         $this->load->view('sidebar');
@@ -40,6 +64,7 @@ class Products extends CI_Controller
         $this->form_validation->set_rules('name', 'Name', 'trim|required');
         $this->form_validation->set_rules('price', 'Price', 'trim|required|numeric');
         $this->form_validation->set_rules('sku', 'SKU', 'trim|required|is_unique[products.sku]');
+        $this->form_validation->set_rules('category_id', 'Category', 'trim|required');
 
         if ($this->form_validation->run() == FALSE) {
             $this->load->view('header');
@@ -78,6 +103,7 @@ class Products extends CI_Controller
         $this->form_validation->set_rules('name', 'Name', 'trim|required');
         $this->form_validation->set_rules('price', 'Price', 'trim|required|numeric');
         $this->form_validation->set_rules('sku', 'SKU', 'trim|required');
+        $this->form_validation->set_rules('category_id', 'Category', 'trim|required');
 
         if ($this->form_validation->run() == FALSE) {
             $data['product'] = $this->products_model->get_by_id($id);

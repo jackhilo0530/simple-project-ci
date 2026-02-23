@@ -10,16 +10,24 @@ class Products_model extends CI_Model
         $this->load->database();
     }
 
-    public function get_all_products()
+    public function get_all_products($page = 1, $limit = 4)
     {
+        $offset = ($page - 1) * $limit;
         $this->db->select('products.*, category.name as category_name');
         $this->db->from('products');
 
         $this->db->join('category', 'products.category_id = category.id', 'left');
 
+        $total = $this->db->count_all_results('', FALSE);
+
+        $this->db->limit($limit, $offset);
+
         $query = $this->db->get();
 
-        return $query->result_array();
+        return array(
+            'products' => $query->result_array(),
+            'total' => $total
+        );
     }
 
     public function get_by_id($id)
@@ -29,24 +37,34 @@ class Products_model extends CI_Model
         return $query->row_array();
     }
 
-    public function search_products($keyword)
+    public function search_products($keyword, $category_id, $page = 1, $limit = 4)  
     {
+        $offset = ($page - 1) * $limit;
+
         $this->db->select('products.*, category.name as category_name');
         $this->db->from('products');
         $this->db->join('category', 'products.category_id = category.id', 'left');
 
-        // Grouping the search terms together
-        $this->db->group_start();
-        $this->db->like('products.name', $keyword);
-        $this->db->or_like('products.sku', $keyword);
-        $this->db->or_like('category.name', $keyword); // Bonus: Search by category name too!
-        $this->db->group_end();
+        if (!empty($keyword)) {
+            $this->db->group_start();
+            $this->db->like('products.name', $keyword);
+            $this->db->or_like('products.sku', $keyword);
+            $this->db->group_end();
+        }
 
-        // Now any future filters (like status) will work correctly
-        // $this->db->where('products.status', 1); 
+        if (!empty($category_id)) {
+            $this->db->where('products.category_id', $category_id);
+        }
+
+        $total = $this->db->count_all_results('', FALSE);
+        $this->db->limit($limit, $offset);
 
         $query = $this->db->get();
-        return $query->result_array();
+
+        return array(
+            'products' => $query->result_array(),
+            'total' => $total
+        );
     }
 
     public function insert_product($data)
