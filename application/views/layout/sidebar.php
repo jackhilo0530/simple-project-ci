@@ -22,11 +22,11 @@
             Products
         </a>
 
-        <!-- Customers Link -->
-        <a href="#"
+        <!-- Users Link -->
+        <a href="<?php echo base_url('users') ?>"
             class="flex items-center px-3 py-2 text-sm font-medium rounded-md no-underline text-gray-700 hover:bg-gray-100 hover:text-blue-600 transition-colors">
             <i class="bi bi-person-circle mr-3 text-lg leading-none"></i>
-            Customers
+            User
         </a>
     </nav>
 </aside>
