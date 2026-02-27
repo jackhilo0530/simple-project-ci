@@ -6,7 +6,7 @@
 
         <div class="flex flex-wrap items-center gap-3">
             <!-- Search Form -->
-            <?php echo form_open('admin/products', array('method' => 'get', 'class' => 'flex items-center gap-2')); ?>
+            <?php echo form_open('admin/orders', array('method' => 'get', 'class' => 'flex items-center gap-2')); ?>
             <input type="search" id="search" placeholder="Search" aria-label="Search" name="search"
                 value="<?php echo html_escape($this->input->get('search')); ?>"
                 class="shadow-xs outline-hidden block w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
@@ -21,9 +21,10 @@
                 onchange="this.form.submit()"
                 class="shadow-xs outline-hidden block rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
                 <option value="">All</option>
-                <option value="1" <?php echo ($this->input->get('category_id') == '1') ? 'selected' : ''; ?>>Electronics</option>
-                <option value="2" <?php echo ($this->input->get('category_id') == '2') ? 'selected' : ''; ?>>Clothing</option>
-                <option value="3" <?php echo ($this->input->get('category_id') == '3') ? 'selected' : ''; ?>>Home Goods</option>
+                <option value="pending" <?php echo ($this->input->get('category_id') == 'pending') ? 'selected' : ''; ?>>Pending</option>
+                <option value="processing" <?php echo ($this->input->get('category_id') == 'processing') ? 'selected' : ''; ?>>Processing</option>
+                <option value="completed" <?php echo ($this->input->get('category_id') == 'completed') ? 'selected' : ''; ?>>Completed</option>
+                <option value="cancelled" <?php echo ($this->input->get('category_id') == 'cancelled') ? 'selected' : ''; ?>>Cancelled</option>
             </select>
 
             <?php echo form_close(); ?>

@@ -11,11 +11,18 @@ class Orders_model extends CI_Model
     }
 
 
-    public function get_all_orders()
+    public function get_all_orders($keyword = null, $category = null)
     {
         $this->db->select('orders.*, users.username as user, users.img_path as user_image, users.email as user_email');
         $this->db->from('orders');
         $this->db->join('users', 'users.id = orders.user_id');
+        if ($keyword) {
+            $this->db->like('orders.id', $keyword);
+            $this->db->or_like('users.username', $keyword);
+        }
+        if ($category) {
+            $this->db->where('orders.status', $category);
+        }
         $this->db->order_by('orders.created_at', 'DESC');
         $orders = $this->db->get()->result_array();
 

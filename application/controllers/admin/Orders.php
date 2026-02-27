@@ -12,8 +12,10 @@ class Orders extends CI_Controller
 
     public function index()
     {
+        $keyword = $this->input->get('search');
+        $category = $this->input->get('category_id');
         if ($this->session->userdata('logged_in') == true || $this->session->userdata('role') == 'admin') {
-            $data['all_orders'] = $this->orders_model->get_all_orders();
+            $data['all_orders'] = $this->orders_model->get_all_orders($keyword, $category);
 
             $this->load->view('layout/header');
             $this->load->view('admin/layout/sidebar');

@@ -12,7 +12,10 @@ class Shipments extends CI_Controller
 
     public function index()
     {
-        $data['shipments'] = $this->shipments_model->get_all_shipments();
+        $keyword = $this->input->get('search');
+        $category = $this->input->get('category');
+
+        $data['shipments'] = $this->shipments_model->get_all_shipments(array('keyword'=> $keyword,'category'=> $category));
 
         $this->load->view('layout/header');
         $this->load->view('admin/layout/sidebar');

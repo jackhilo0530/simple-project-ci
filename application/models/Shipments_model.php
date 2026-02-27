@@ -9,10 +9,22 @@ class Shipments_model extends CI_Model
         $this->load->database();
     }
 
-    public function get_all_shipments()
+    public function get_all_shipments(array $params = array())
     {
+        if (isset($params['keyword']) && !empty($params['keyword'])) {
+            $this->db->group_start();
+            $this->db->like('tracking_number', $params['keyword']);
+            $this->db->or_like('carrier', $params['keyword']);
+            $this->db->group_end();
+        }
+
+        if (isset($params['category']) && !empty($params['category'])) {
+            $this->db->where('status', $params['category']);
+        }
+
+        $this->db->order_by('created_at', 'DESC');
         $query = $this->db->get('shipments');
-        
+
         return $query->result_array();
     }
 
@@ -20,7 +32,7 @@ class Shipments_model extends CI_Model
     {
         $this->db->where('id', $id);
         $query = $this->db->get('shipments');
-        
+
         return $query->row();
     }
 
@@ -33,7 +45,7 @@ class Shipments_model extends CI_Model
             'created_at' => date('Y-m-d H:i:s'),
         );
 
-        if($this->db->get_where('shipments', array('order_id' => $order_id))->num_rows() > 0) {
+        if ($this->db->get_where('shipments', array('order_id' => $order_id))->num_rows() > 0) {
             return false; // Shipment already exists for this order
         }
         return $this->db->insert('shipments', $data);
