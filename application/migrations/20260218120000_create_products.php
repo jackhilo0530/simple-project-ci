@@ -30,6 +30,17 @@ class Migration_Create_products extends CI_Migration
                 'type' => 'DECIMAL',
                 'constraint' => '10,2'
             ),
+            'complete_at_price' => array(
+                'type' => 'DECIMAL',
+                'constraint' => '10,2',
+                'null' => TRUE
+            ),
+            'stock_quantity' => array(
+                'type' => 'INT',
+                'constraint' => 5,
+                'unsigned' => TRUE,
+                'null' => TRUE
+            ),
             'image_path' => array(
                 'type' => 'VARCHAR',
                 'constraint' => '255',
@@ -39,6 +50,14 @@ class Migration_Create_products extends CI_Migration
                 'type'=> 'INT',
                 'constraint' => '5',
                 'unsigned' => TRUE
+            ),
+            'status' => array(
+                'type' => 'ENUM("active","inactive")',
+                'default' => 'active'
+            ),
+            'is_draft' => array(
+                'type' => 'BOOLEAN',
+                'default' => FALSE
             ),
             'created_at' => array(
                 'type' => 'DATETIME',
@@ -56,6 +75,8 @@ class Migration_Create_products extends CI_Migration
         $this->dbforge->add_field('CONSTRAINT FOREIGN KEY (category_id) REFERENCES category(id) ON DELETE CASCADE');
 
         $this->dbforge->add_key('name');
+        $this->dbforge->add_key('status');
+        $this->dbforge->add_key('is_draft');
         $this->dbforge->add_key('category_id');
 
         if ($this->dbforge->create_table('products', true)) {

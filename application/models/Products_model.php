@@ -15,8 +15,8 @@ class Products_model extends CI_Model
         $offset = ($page - 1) * $limit;
         $this->db->select('products.*, category.name as category_name');
         $this->db->from('products');
-
         $this->db->join('category', 'products.category_id = category.id', 'left');
+        if ($this->session->userdata('role') === 'user') : $this->db->where('products.status', 'active'); endif;
 
         $total = $this->db->count_all_results('', FALSE);
 
@@ -32,18 +32,22 @@ class Products_model extends CI_Model
 
     public function get_by_id($id)
     {
-        $query = $this->db->get_where('products', array('id' => $id));
-
+        $this->db->select('products.*, category.name as category_name');
+        $this->db->from('products');
+        $this->db->join('category', 'products.category_id = category.id', 'left');
+        $this->db->where('products.id', $id);
+        $query = $this->db->get();
         return $query->row_array();
     }
 
-    public function search_products($keyword, $category_id, $page = 1, $limit = 4)  
+    public function search_products($keyword, $category_id, $page = 1, $limit = 4)
     {
         $offset = ($page - 1) * $limit;
 
         $this->db->select('products.*, category.name as category_name');
         $this->db->from('products');
         $this->db->join('category', 'products.category_id = category.id', 'left');
+        if($this->session->userdata('role') === 'user') : $this->db->where('products.status', 'active'); endif;
 
         if (!empty($keyword)) {
             $this->db->group_start();
@@ -70,6 +74,12 @@ class Products_model extends CI_Model
     public function insert_product($data)
     {
         return $this->db->insert('products', $data);
+    }
+
+    public function get_categories()
+    {
+        $query = $this->db->get('category');
+        return $query->result_array();
     }
 
     public function update_product($id, $data)
