@@ -52,8 +52,8 @@ class Products extends CI_Controller
         $data['pagination_links'] = $this->pagination->create_links();
 
         $this->load->view('layout/header');
-        $this->load->view('layout/sidebar');
-        $this->load->view('pages/products/products', $data);
+        $this->load->view('admin/layout/sidebar');
+        $this->load->view('admin/pages/products/products', $data);
         $this->load->view('layout/footer');
     }
 
@@ -62,13 +62,17 @@ class Products extends CI_Controller
         $this->load->library('form_validation');
 
         $this->form_validation->set_rules('name', 'Name', 'trim|required');
-        $this->form_validation->set_rules('price', 'Price', 'trim|required|numeric');
+        $this->form_validation->set_rules('price', 'Price', 'trim|required|numeric|greater_than_equal_to[0]');
+        $this->form_validation->set_rules('complete_at_price', 'Complete At Price', 'trim|numeric|greater_than_equal_to[0]');
         $this->form_validation->set_rules('sku', 'SKU', 'trim|required|is_unique[products.sku]');
         $this->form_validation->set_rules('category_id', 'Category', 'trim|required');
-
+        $this->form_validation->set_rules('stock_quantity', 'Stock Quantity', 'trim|required|integer');
         if ($this->form_validation->run() == FALSE) {
+
+            $data['categories'] = $this->products_model->get_categories();
+
             $this->load->view('layout/header');
-            $this->load->view('pages/products/add_product');
+            $this->load->view('admin/pages/products/add_product', $data);
             $this->load->view('layout/footer');
         } else {
 
@@ -80,9 +84,15 @@ class Products extends CI_Controller
                 'description' => $this->input->post('description'),
                 'sku' => $this->input->post('sku'),
                 'price' => $this->input->post('price'),
+                'stock_quantity' => $this->input->post('stock_quantity'),
+                'status' => 'inactive',
                 'category_id' => $this->input->post('category_id'),
                 'created_at' => date('Y-m-d H:i:s'),
             );
+
+            if($this->input->post('complete_at_price') > 0) {
+                $data['complete_at_price'] = $this->input->post('complete_at_price');
+            }
 
             // 3. If upload was successful, save the FILENAME, not the POST data
             if (isset($upload_result['file_name'])) {
@@ -92,7 +102,7 @@ class Products extends CI_Controller
             }
 
             $this->products_model->insert_product($data);
-            redirect('products');
+            redirect('admin/products');
         }
     }
 
@@ -101,15 +111,16 @@ class Products extends CI_Controller
         $this->load->library('form_validation');
 
         $this->form_validation->set_rules('name', 'Name', 'trim|required');
-        $this->form_validation->set_rules('price', 'Price', 'trim|required|numeric');
+        $this->form_validation->set_rules('complete_at_price', 'Complete At Price', 'trim|numeric|greater_than_equal_to[0]');
         $this->form_validation->set_rules('sku', 'SKU', 'trim|required');
         $this->form_validation->set_rules('category_id', 'Category', 'trim|required');
+        $this->form_validation->set_rules('stock_quantity', 'Stock Quantity', 'trim|required|integer');
 
         if ($this->form_validation->run() == FALSE) {
             $data['product'] = $this->products_model->get_by_id($id);
 
             $this->load->view('layout/header');
-            $this->load->view('pages/products/edit_product', $data);
+            $this->load->view('admin/pages/products/edit_product', $data);
             $this->load->view('layout/footer');
             return;
         } else {
@@ -118,7 +129,8 @@ class Products extends CI_Controller
                 'name' => $this->input->post('name'),
                 'description' => $this->input->post('description'),
                 'sku' => $this->input->post('sku'),
-                'price' => $this->input->post('price'),
+                'complete_at_price' => $this->input->post('complete_at_price'),
+                'stock_quantity' => $this->input->post('stock_quantity'),
                 'category_id' => $this->input->post('category_id'),
                 'updated_at' => date('Y-m-d H:i:s')
             );
@@ -134,8 +146,46 @@ class Products extends CI_Controller
             }
 
             $this->products_model->update_product($id, $data);
-            redirect('products');
+            redirect('admin/products');
         }
+    }
+
+    public function detail_product($id)
+    {
+        $data['product'] = $this->products_model->get_by_id($id);
+
+        if($data['product']) {
+            $this->load->view('layout/header');
+            $this->load->view('admin/pages/products/detail_product', $data);
+            $this->load->view('layout/footer');
+        } else {
+            redirect('admin/products');
+        }
+    }
+
+    public function toggle_status($id)
+    {
+        $product = $this->products_model->get_by_id($id);
+        if ($product) {
+            $new_status = ($product['status'] === 'active') ? 'inactive' : 'active';
+            $this->products_model->update_product($id, array('status' => $new_status));
+        }
+        redirect('admin/products');
+    }
+
+    public function toggle_draft($id)
+    {
+        $product = $this->products_model->get_by_id($id);
+        if ($product) {
+
+            if($product['is_draft']) {
+                $this->products_model->update_product($id, array('status' => 'inactive'));
+                $this->products_model->update_product($id, array('is_draft' => FALSE));
+            } else {
+                $this->products_model->update_product($id, array('is_draft' => TRUE));
+            }
+        }
+        redirect('admin/products');
     }
 
     public function do_upload($field_name)
@@ -157,6 +207,6 @@ class Products extends CI_Controller
     public function delete($id)
     {
         $this->products_model->delete_product($id);
-        redirect('products');
+        redirect('admin/products');
     }
 }

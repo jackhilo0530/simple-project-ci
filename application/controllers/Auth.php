@@ -13,50 +13,6 @@ class Auth extends CI_Controller
         $this->load->library('upload');
     }
 
-    public function index()
-    {
-        if ($this->session->userdata('logged_in') && $this->session->userdata('role') === 'admin') {
-
-            $keyword = $this->input->get('search');
-            $category = $this->input->get('role');
-
-            $page = $this->input->get('page') ?: 1;
-
-            if (!$keyword && !$category) {
-                $result = $this->auth_model->get_all_users($page);
-            } else {
-                // Implement search/filter logic in the model if needed
-                $result = $this->auth_model->search_users($keyword, $category, $page);
-            }
-
-            $data['users'] = $result['users'];
-            $data['total'] = $result['total'];
-            $data['current_page'] = $page;
-
-            // --- PAGINATION SETTINGS ---
-            $this->load->library('pagination');
-            $config['base_url'] = site_url('auth');
-            $config['total_rows'] = $result['total'];
-            $config['per_page'] = 4;
-            $config['page_query_string'] = TRUE;
-            $config['query_string_segment'] = 'page';
-            $config['use_page_numbers'] = TRUE;
-
-
-            $config['reuse_query_string'] = TRUE;
-
-            $this->pagination->initialize($config);
-            $data['pagination_links'] = $this->pagination->create_links();
-
-
-            $this->load->view('layout/header');
-            $this->load->view('layout/sidebar');
-            $this->load->view('pages/user/users', $data);
-            $this->load->view('layout/footer');
-        } else {
-            redirect('/auth/signin');
-        }
-    }
     public function signup()
     {
 
@@ -70,7 +26,7 @@ class Auth extends CI_Controller
 
         if ($this->form_validation->run() == FALSE) {
             $this->load->view('layout/header');
-            $this->load->view('pages/user/signup');
+            $this->load->view('pages/signup');
             $this->load->view('layout/footer');
         } else {
             $upload_result = $this->do_upload('avatar');
@@ -92,11 +48,11 @@ class Auth extends CI_Controller
             if ($this->auth_model->signup($data)) {
 
                 $this->load->view('layout/header');
-                $this->load->view('pages/user/signin');
+                $this->load->view('pages/signin');
                 $this->load->view('layout/footer');
             } else {
                 $this->load->view('layout/header');
-                $this->load->view('pages/user/signup');
+                $this->load->view('pages/signup');
                 $this->load->view('layout/footer');
             }
         }
@@ -115,7 +71,7 @@ class Auth extends CI_Controller
 
         if ($this->form_validation->run() == FALSE) {
             $this->load->view('layout/header');
-            $this->load->view('pages/user/signin');
+            $this->load->view('pages/signin');
             $this->load->view('layout/footer');
         } else {
             $username = $this->input->post('username');
@@ -125,18 +81,30 @@ class Auth extends CI_Controller
                 $user_id = $this->auth_model->get_user_id_from_username($username);
                 $user = $this->auth_model->get_user($user_id);
 
-                $_SESSION['user_id'] = (int)$user['id'];
+                if ($user['status'] !== 'active') {
+                    $data->error = 'Your account is inactive. Please contact the administrator.';
+                    $this->load->view('layout/header');
+                    $this->load->view('pages/signin', $data);
+                    $this->load->view('layout/footer');
+                    return;
+                } else {
+                    $_SESSION['user_id'] = (int)$user['id'];
 
-                
-                $_SESSION['username'] = (string)$user['username'];
-                $_SESSION['logged_in'] = (bool)true;
-                $_SESSION['role'] = (string)$user['role'];
 
-                redirect('/dashboard');
+                    $_SESSION['username'] = (string)$user['username'];
+                    $_SESSION['logged_in'] = (bool)true;
+                    $_SESSION['role'] = (string)$user['role'];
+
+                    if($user['role'] === 'admin') {
+                        redirect('admin/dashboard');
+                    }else {
+                        redirect('customer/home');
+                    }
+                }
             } else {
                 $data->error = 'Wrong username or password.';
                 $this->load->view('layout/header');
-                $this->load->view('pages/user/signin', $data);
+                $this->load->view('pages/signin', $data);
                 $this->load->view('layout/footer');
             }
         }
@@ -156,57 +124,6 @@ class Auth extends CI_Controller
             return array('error' => $this->upload->display_errors());
         } else {
             return $this->upload->data();
-        }
-    }
-
-    public function get_user_details($id)
-    {
-        $data['user'] = $this->auth_model->get_user($id);
-
-        if ($data['user']) {
-            $this->load->view('pages/user/detail_modal', $data);
-        } else {
-            echo '<div class="p-6 text-center text-red-500 font-semibold">User not found.</div>';
-        }
-    }
-
-    public function edit_user($id)
-    {
-        $this->load->library('form_validation');
-
-        $this->form_validation->set_rules('username', 'Username', 'trim|required|min_length[3]');
-        $this->form_validation->set_rules('email', 'Email', 'trim|required|valid_email');
-        $this->form_validation->set_rules('role', 'Role', 'trim|required');
-
-        
-
-        if ($this->form_validation->run() == FALSE) {
-            $data['user'] = $this->auth_model->get_user($id);
-
-            $this->load->view('layout/header');
-            $this->load->view('layout/sidebar');
-            $this->load->view('pages/user/edit_user', $data);
-            $this->load->view('layout/footer');
-            return;
-        } else {
-
-            $data = array(
-                'username' => $this->input->post('username'),
-                'email' => $this->input->post('email'),
-                'role' => $this->input->post('role'),
-                'updated_at' => date('Y-m-d H:i:s')
-            );
-
-             if (!empty($_FILES['avatar']['name'])) {
-                $upload_result = $this->do_upload('avatar');
-
-                if (isset($upload_result['file_name'])) {
-                    $data['img_path'] = $upload_result['file_name'];
-                }
-            }
-
-            $this->auth_model->update_user($id, $data);
-            redirect('users');
         }
     }
 

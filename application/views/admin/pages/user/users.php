@@ -29,9 +29,15 @@ defined("BASEPATH") or exit("No direct script access allowed");
                     class="block w-full rounded-lg border border-gray-300 bg-white py-2 pl-10 pr-3 text-center text-sm placeholder-gray-400 shadow-sm outline-none transition-all focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 md:w-64">
             </div>
 
+            <button type="submit"
+                class="inline-flex cursor-pointer items-center justify-center rounded-lg bg-green-100 px-4 py-2 text-sm font-semibold text-green-600 shadow-sm transition-all hover:bg-green-300 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2">
+                Search
+            </button>
+
             <!-- Role Filter Dropdown -->
             <div class="relative">
                 <select id="category" name="role" aria-label="Category Filter"
+                    onchange="this.form.submit()"
                     class="block w-full cursor-pointer appearance-none rounded-lg border border-gray-300 bg-white px-2 py-2 pl-3 pr-10 text-sm shadow-sm outline-none transition-all focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200">
                     <option value="">All roles</option>
                     <option value="admin" <?php echo ($this->input->get('role') == 'admin') ? 'selected' : ''; ?>>Admin</option>
@@ -44,12 +50,6 @@ defined("BASEPATH") or exit("No direct script access allowed");
                     </svg>
                 </div>
             </div>
-
-            <button type="submit"
-                class="inline-flex cursor-pointer items-center justify-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-green-600 shadow-sm transition-all hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2">
-                Apply Filters
-            </button>
-
             <?php echo form_close(); ?>
         </div>
     </div>
@@ -57,7 +57,7 @@ defined("BASEPATH") or exit("No direct script access allowed");
     <dialog id="userModal" class="fixed z-50 mx-auto mt-12 overflow-hidden rounded-xl border-none bg-white p-4 shadow-xl backdrop:bg-gray-900/60 backdrop:backdrop-blur-xl open:flex open:flex-col">
 
         <div id="modalContent" class="py-8">
-            
+
         </div>
     </dialog>
 
@@ -82,7 +82,7 @@ defined("BASEPATH") or exit("No direct script access allowed");
                     <?php foreach ($users as $user) : ?>
                         <tr class="transition-colors hover:bg-gray-50">
                             <!-- User & Image -->
-                            <td class="in-hover:bg-indigo-50/80 px-6 py-4 transition-colors">
+                            <td class="px-6 py-4 transition-colors">
                                 <div class="flex items-center gap-3">
                                     <img src="<?php echo base_url('uploads/avatars/' . ($user['img_path'] ?: 'default.jpg')); ?>"
                                         alt="user"
@@ -108,20 +108,22 @@ defined("BASEPATH") or exit("No direct script access allowed");
                                 <?php
                                 $statusColor = ($user['status'] == 'active') ? 'text-green-700 bg-green-50 ring-green-600/20' : 'text-gray-600 bg-gray-50 ring-gray-500/10';
                                 ?>
-                                <span class="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset <?php echo $statusColor; ?>">
-                                    <span class="mr-1.5 h-1.5 w-1.5 rounded-full fill-current <?php echo ($user['status'] == 'active') ? 'bg-green-600' : 'bg-gray-400'; ?>"></span>
-                                    <?php echo ucfirst($user['status']); ?>
-                                </span>
+                                <a href="<?php echo site_url('admin/auth_admin/toggle_status/' . $user['id']); ?>">
+                                    <span class="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset <?php echo $statusColor; ?>">
+                                        <span class="mr-1.5 h-1.5 w-1.5 rounded-full fill-current <?php echo ($user['status'] == 'active') ? 'bg-green-600' : 'bg-gray-400'; ?>"></span>
+                                        <?php echo ucfirst($user['status']); ?>
+                                    </span>
+                                </a>
                             </td>
 
                             <!-- Actions -->
                             <td class="px-6 py-4 text-center transition-colors group-hover:bg-indigo-50/80">
                                 <div class="flex justify-center gap-2">
-                                    <a href="<?php echo site_url('users/edit_user/' . $user['id']); ?>"
+                                    <a href="<?php echo site_url('admin/auth_admin/edit_user/' . $user['id']); ?>"
                                         class="inline-flex items-center rounded-lg bg-white px-3 py-1.5 text-xs font-semibold text-amber-600 shadow-sm ring-1 ring-inset ring-amber-500 transition-all hover:bg-amber-50">
                                         Edit
                                     </a>
-                                    <a href="<?php echo site_url('users/delete/' . $user['id']); ?>"
+                                    <a href="<?php echo site_url('admin/auth_admin/delete/' . $user['id']); ?>"
                                         class="inline-flex items-center rounded-lg bg-white px-3 py-1.5 text-xs font-semibold text-red-600 shadow-sm ring-1 ring-inset ring-red-500 transition-all hover:bg-red-50"
                                         onclick="return confirm('Delete this user?')">
                                         Delete
@@ -143,10 +145,10 @@ defined("BASEPATH") or exit("No direct script access allowed");
         $params = $this->input->get();
 
         $params['page'] = max(1, $current_page - 1);
-        $prev_url = site_url('auth/index?' . http_build_query($params));
+        $prev_url = site_url('admin/auth_admin/index?' . http_build_query($params));
 
         $params['page'] = min($current_page + 1, ceil($total / 4));
-        $next_url = site_url('auth/index?' . http_build_query($params));
+        $next_url = site_url('admin/auth_admin/index?' . http_build_query($params));
         $limit = 4;
 
         $start_item = ($total > 0) ? ($current_page - 1) * $limit + 1 : 0;
@@ -186,6 +188,7 @@ defined("BASEPATH") or exit("No direct script access allowed");
             </a>
         </div>
     </nav>
+
 </div>
 
 <script>
@@ -199,7 +202,7 @@ defined("BASEPATH") or exit("No direct script access allowed");
             if (openBtn) {
                 const userId = openBtn.getAttribute('data-user-id');
 
-                fetch(`<?php echo site_url('users/get_user_details/'); ?>/${userId}`)
+                fetch(`<?php echo site_url('admin/auth_admin/get_user_details'); ?>/${userId}`)
                     .then(response => response.text())
                     .then(data => {
                         modalContent.innerHTML = data;

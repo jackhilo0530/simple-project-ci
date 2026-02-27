@@ -17,6 +17,10 @@ class Migration_Create_category extends CI_Migration {
                 'constraint' => '100',
                 'null' => FALSE
             ),
+            'description' => array(
+                'type' => 'TEXT',
+                'null' => TRUE
+            ),
             'created_at' => array(
                 'type' => 'DATETIME',
                 'null' => TRUE
@@ -28,6 +32,7 @@ class Migration_Create_category extends CI_Migration {
         ));
 
         $this->dbforge->add_key('id', TRUE);
+        
         if ($this->dbforge->create_table('category', TRUE)) {
             echo 'Table "category" created successfully!';
         } else {

@@ -14,7 +14,7 @@
 
     <!-- Status Badges -->
     <div class="mb-6 flex justify-center gap-2">
-        <span class="rounded-full bg-indigo-50 px-3 py-1 text-[10px] font-bold text-indigo-600 ring-1 ring-inset ring-indigo-200 uppercase tracking-tight">
+        <span class="rounded-full bg-indigo-50 px-3 py-1 text-[10px] font-bold uppercase tracking-tight text-indigo-600 ring-1 ring-inset ring-indigo-200">
             <?php echo $user['role']; ?>
         </span>
         <span class="rounded-full px-3 py-1 text-[10px] font-bold ring-1 ring-inset uppercase tracking-tight <?php echo ($user['status'] == 'active') ? 'bg-green-50 text-green-600 ring-green-200' : 'bg-gray-50 text-gray-500 ring-gray-200'; ?>">
@@ -36,12 +36,12 @@
 
     <!-- Actions -->
     <div class="mt-8 flex gap-3">
-        <a href="<?php echo site_url('users/edit_user/' . $user['id']); ?>"
-            class="flex-1 rounded-xl bg-white py-2.5 text-sm font-bold text-gray-600 ring-1 ring-inset ring-gray-200 hover:bg-gray-50 transition-all">
+        <a href="<?php echo site_url('admin/auth_admin/edit_user/' . $user['id']); ?>"
+            class="flex-1 rounded-xl bg-white py-2.5 text-sm font-bold text-gray-600 ring-1 ring-inset ring-gray-200 transition-all hover:bg-gray-50">
             Edit
         </a>
         <button id="closeModal"
-            class="flex-1 rounded-xl bg-white py-2.5 text-sm font-bold text-gray-600 ring-1 ring-inset ring-gray-200 hover:bg-gray-50 transition-all">
+            class="flex-1 rounded-xl bg-white py-2.5 text-sm font-bold text-gray-600 ring-1 ring-inset ring-gray-200 transition-all hover:bg-gray-50">
             Close
         </button>
     </div>
