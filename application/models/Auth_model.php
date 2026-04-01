@@ -5,16 +5,45 @@
         public function __construct() {
             parent::__construct();
             $this->load->database();
+            $this->load->library("upload");
         }
 
-        public function signup($username, $email, $password) {
+        public function get_all_users($page = 1, $limit = 4) {
+            $offset = ($page - 1) * $limit;
 
-            $data = array(
-                'username' => $username,
-                'email'=> $email,
-                'password_hash'=> hash('sha256', $password),
-                'created_at' => date('Y-m-d H:i:s'),
+            $total = $this->db->count_all('users');
+            $this->db->limit($limit, $offset);
+            $query = $this->db->get('users');
+            return array(
+                'users' => $query->result_array(),
+                'total' => $total
             );
+        }
+
+        public function search_users($keyword, $role, $page = 1, $limit = 4) {
+            $offset = ($page - 1) * $limit;
+
+            if (!empty($keyword)) {
+                $this->db->group_start();
+                $this->db->like('username', $keyword);
+                $this->db->or_like('email', $keyword);
+                $this->db->group_end();
+            }
+
+            if (!empty($role)) {
+                $this->db->where('role', $role);
+            }
+
+            $total = $this->db->count_all_results('users', FALSE);
+            $this->db->limit($limit, $offset);
+
+            return array(
+                'users' => $this->db->get()->result_array(),
+                'total' => $total
+            );
+        }
+
+        public function signup($data) {
 
             return $this->db->insert('users', $data);
         }
@@ -40,11 +69,21 @@
             $this->db->from('users');
             $this->db->where('id', $user_id);
 
-            return $this->db->get()->row();
+            return $this->db->get()->row_array();
         }
 
         private function verify_password_hash($password, $hash) {
             return hash('sha256', $password) === $hash;
+        }
+
+        public function update_user($id, $data) {
+            $this->db->where('id', $id);
+            return $this->db->update('users', $data);
+        }
+
+        public function delete_user($id) {
+            $this->db->where('id', $id);
+            return $this->db->delete('users');
         }
     }
 ?>

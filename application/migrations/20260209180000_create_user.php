@@ -19,8 +19,7 @@ class Migration_Create_user extends CI_Migration
 			),
 			'email' => array(
 				'type' => 'VARCHAR',
-				'constraint' => '100',
-				'unique' => TRUE
+				'constraint' => '100'
 			),
 			'password_hash' => array(
 				'type' => 'VARCHAR',
@@ -29,6 +28,18 @@ class Migration_Create_user extends CI_Migration
 			'img_path' => array(
 				'type' => 'VARCHAR',
 				'constraint' => '255',
+				'null' => TRUE
+			),
+			'role' => array(
+				'type' => 'ENUM("admin", "user")',
+				'default' => 'user'
+			),
+			'status' => array(
+				'type' => 'ENUM("active", "inactive")',
+				'default' => 'active'
+			),
+			'last_signin' => array(
+				'type' => 'DATETIME',
 				'null' => TRUE
 			),
 			'created_at' => array(
@@ -44,8 +55,13 @@ class Migration_Create_user extends CI_Migration
 		$this->dbforge->add_field($fields);
 		$this->dbforge->add_key('id', TRUE);
 
+		$this->dbforge->add_key('role');
+		$this->dbforge->add_key('status');
+
 		if ($this->dbforge->create_table('users', true)) {
-            echo 'Table "users" created successfully!';
+
+			$this->db->query("ALTER TABLE `users` ADD UNIQUE (`email`)");
+			echo 'Table "users" created successfully!';
         } else {
             echo 'Error creating table!';
         }
